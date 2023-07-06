@@ -1,5 +1,5 @@
 -- Pull in the wezterm API
-local wezterm = require 'wezterm'
+local wezterm = require("wezterm")
 
 -- This table will hold the configuration.
 local config = {}
@@ -13,7 +13,7 @@ end
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.color_scheme = 'Hardcore'
+config.color_scheme = "Hardcore"
 
 config.max_fps = 100
 config.animation_fps = 100
@@ -23,13 +23,14 @@ config.hide_tab_bar_if_only_one_tab = true
 
 config.keys = {
   {
-    key = 'n',
-    mods = 'SHIFT|CTRL',
+    key = "n",
+    mods = "SHIFT|CTRL",
     action = wezterm.action.ToggleFullScreen,
   },
 }
 config.native_macos_fullscreen_mode = true
 
+config.line_height = 1.2
+
 -- and finally, return the configuration to wezterm
 return config
-
