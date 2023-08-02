@@ -13,7 +13,10 @@ end
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.color_scheme = "Hardcore"
+config.color_scheme = "carbonfox"
+config.colors = {
+  background = "black",
+}
 
 config.max_fps = 100
 config.animation_fps = 100
