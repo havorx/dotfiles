@@ -23,7 +23,7 @@ gui:
     selectedLineBgColor:
       - bold # set to `default` to have no background colour
     selectedRangeBgColor:
-      - blue
+      - reverse
     cherryPickedCommitBgColor:
       - cyan
     cherryPickedCommitFgColor:
