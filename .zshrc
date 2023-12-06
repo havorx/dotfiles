@@ -1,9 +1,7 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export PATH=/home/havorx/.local/bin:$PATH
-
 export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -72,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions vi-mode zsh-syntax-highlighting docker-compose docker brew yarn fzf-tab)
+plugins=(git zsh-autosuggestions vi-mode zsh-syntax-highlighting docker-compose docker brew yarn fzf-tab tmux)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -148,17 +146,14 @@ then
 fi
 
 
-LFCD="/path/to/lfcd.sh"
-if [ -f "$LFCD" ]; then
-  source "$LFCD"
-fi
-
 lfcd () {
   # `command` is needed in case `lfcd` is aliased to `lf`
   cd "$(command lf -print-last-dir "$@")"
 }
 
 bindkey -s '^o' 'lfcd\n'  # zsh
+
+bindkey -s '^f' 'fzf\n'
 
 eval "$(starship init zsh)"
 
