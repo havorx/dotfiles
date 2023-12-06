@@ -2,6 +2,8 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
+export PATH=/home/havorx/.local/bin:$PATH
+
 export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -70,7 +72,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions vi-mode zsh-syntax-highlighting docker-compose docker brew yarn)
+plugins=(git zsh-autosuggestions vi-mode zsh-syntax-highlighting docker-compose docker brew yarn fzf-tab)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -100,10 +102,13 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+
+alias v='nvim'
 alias vi='nvim'
 alias vim='nvim'
 
-source "$HOME/.zsh/spaceship/spaceship.zsh"
+export VISUAL=nvim
+export EDITOR=nvim
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -133,3 +138,28 @@ load-nvmrc() {
 
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
+
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
+
+
+LFCD="/path/to/lfcd.sh"
+if [ -f "$LFCD" ]; then
+  source "$LFCD"
+fi
+
+lfcd () {
+  # `command` is needed in case `lfcd` is aliased to `lf`
+  cd "$(command lf -print-last-dir "$@")"
+}
+
+bindkey -s '^o' 'lfcd\n'  # zsh
+
+eval "$(starship init zsh)"
+
+eval "$(zoxide init zsh)"
