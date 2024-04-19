@@ -1,0 +1,9 @@
+[user]
+	name = nguyen
+	email = nguyen.nc2710@gmail.com
+[fetch]
+	prune = true
+[core]
+	editor = nvim
+[merge]
+	tool = nvimdiff
