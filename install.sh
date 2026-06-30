@@ -33,6 +33,7 @@ step "oh-my-zsh"   source "$DOTFILES/install/02-oh-my-zsh.sh"
 step "mise"         source "$DOTFILES/install/04-mise.sh"
 step "Stow"         source "$DOTFILES/install/05-stow.sh"
 step "tmux TPM"    source "$DOTFILES/install/03-tpm.sh"
+step "Neovim"      source "$DOTFILES/install/09-neovim.sh"
 step "zshenv"       source "$DOTFILES/install/06-zshenv.sh"
 step "Shell"        source "$DOTFILES/install/07-shell.sh"
 

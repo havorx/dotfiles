@@ -27,6 +27,7 @@ config.disable_default_mouse_bindings = true
 
 config.enable_kitty_keyboard = true
 config.canonicalize_pasted_newlines = "LineFeed"
+config.enable_osc52_clipboard_reading = true
 
 config.keys = {
 	-- {
