@@ -35,9 +35,9 @@ config.keys = {
 	-- 	action = wezterm.action.ToggleFullScreen,
 	-- },
 	{
-		key = "phys:Return",
+		key = "Enter",
 		mods = "SHIFT",
-		action = wezterm.action.SendString("\n"),
+		action = wezterm.action.SendString("\x1b\n"),
 	},
 	{
 		key = "P",
