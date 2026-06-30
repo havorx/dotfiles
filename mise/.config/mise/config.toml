@@ -8,3 +8,4 @@ usage = "latest"
 
 [settings]
 not_found_auto_install = false
+hook_env.chpwd_only = true

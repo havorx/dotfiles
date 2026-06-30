@@ -11,8 +11,8 @@ sudo apt update
 # Phase 1: Core prerequisites (brew prerequisites per official docs)
 sudo apt install -y git curl file procps build-essential
 
-# Phase 2: Shell
-sudo apt install -y zsh
+# Phase 2: Shell + essential tools
+sudo apt install -y zsh stow
 
 mkdir -p ~/.local/bin
 ln -sf /usr/bin/fdfind ~/.local/bin/fd 2>/dev/null || true
@@ -30,7 +30,7 @@ echo "  Installing brew packages..."
 brew install neovim lazygit lazydocker git-delta lf
 
 # Phase 4: Core dev tools (optional failures OK)
-sudo apt install -y tmux fzf ripgrep fd-find bat stow 2>/dev/null || true
+sudo apt install -y tmux fzf ripgrep fd-find bat 2>/dev/null || true
 
 # Phase 5: Extras (optional)
 sudo apt install -y eza htop 2>/dev/null || true

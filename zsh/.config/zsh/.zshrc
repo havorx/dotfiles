@@ -72,7 +72,7 @@ ZSH_THEME=""
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions vi-mode docker-compose docker brew yarn fzf-tab tmux golang ruby rbenv rust zsh-syntax-highlighting)
+plugins=(git zsh-autosuggestions vi-mode docker-compose docker brew yarn fzf-tab tmux golang ruby rbenv rust mise zsh-syntax-highlighting)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
@@ -133,7 +133,7 @@ source <(fzf --zsh)
 
 eval "$(~/.local/bin/mise activate zsh)"
 
-eval "$(~/.local/bin/mise completion zsh)"
+
 
 # opencode
 export PATH=/home/havorx/.opencode/bin:$PATH
