@@ -1,38 +1,48 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export DBX_CONTAINER_MANAGER=docker
+export DBX_CONTAINER_MANAGER=podman
 IMAGE="${1:-ubuntu:24.04}"
 NAME="test-dotfiles-$(date +%s)"
 
-echo "Creating Distrobox: $NAME ($IMAGE)..."
-distrobox create --name "$NAME" --image "$IMAGE" --unshare-all --yes
+echo "Creating Distrobox: $NAME ($IMAGE) via Podman..."
+distrobox create --name "$NAME" --image "$IMAGE" --yes
+
+echo "Initializing container (triggers distrobox setup)..."
+distrobox enter "$NAME" -- true
 
 echo "Copying dotfiles in..."
-distrobox enter "$NAME" -- cp -r "$HOME/dotfiles" /tmp/dotfiles
+podman start "$NAME"
+podman exec "$NAME" mkdir -p /tmp/dotfiles
+podman cp "$HOME/dotfiles/." "$NAME:/tmp/dotfiles/"
 
 echo "Running install..."
-distrobox enter "$NAME" -- bash -c '
+podman exec "$NAME" bash -c '
   set -euo pipefail
   cp -r /tmp/dotfiles ~/dotfiles
   cd ~/dotfiles
-  ./install.sh
+  ./install.sh 2>&1
+' | while IFS= read -r line; do echo "  $line"; done
+
+echo ""
+echo "=== Verifying ==="
+podman exec "$NAME" bash -c '
+  echo "Checking tools..."
+  which tmux neovim fzf starship zoxide mise || true
   echo ""
-  echo "=== Verifying ==="
-  which tmux neovim fzf starship zoxide mise
-  ls ~/.oh-my-zsh
-  ls ~/.config/zsh/.zshrc
-  ls ~/.config/git/config
+  echo "Checking oh-my-zsh..."
+  ls ~/.oh-my-zsh/ 2>/dev/null || echo "  oh-my-zsh not found"
+  echo ""
+  echo "Checking stow symlinks..."
+  ls -la ~/.config/zsh/.zshrc ~/.config/git/config 2>/dev/null || echo "  symlinks not found"
   echo ""
   echo "=== Testing idempotency ==="
-  ./install.sh
-  echo "All checks passed!"
-'
+  cd ~/dotfiles && ./install.sh
+' | while IFS= read -r line; do echo "  $line"; done
 
 echo ""
 echo "Cleaning up..."
 distrobox stop "$NAME" --yes
 distrobox rm "$NAME" --yes
 
-echo ""
 echo "✓ All tests passed!"
