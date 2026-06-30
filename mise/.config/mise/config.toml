@@ -1,0 +1,7 @@
+[tools]
+go = "latest"
+java = "latest"
+node = "lts"
+python = "latest"
+rust = "latest"
+usage = "latest"
