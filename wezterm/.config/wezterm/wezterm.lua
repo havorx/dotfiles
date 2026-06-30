@@ -52,7 +52,7 @@ config.keys = {
 	},
 }
 
-config.font = wezterm.font("JetBrainsMono Nerd Font", { weight = "Medium" })
+config.font = wezterm.font("JetBrains Mono", { weight = "Medium" })
 
 -- config.front_end = "WebGpu"
 
