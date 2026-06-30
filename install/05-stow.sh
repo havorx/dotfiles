@@ -28,12 +28,11 @@ fi
 
 stow -v -t "$HOME" $PACKAGES
 
-# WezTerm hard link on Windows
+# WezTerm sync to Windows
 WINDOWS_USER=$(cmd.exe /c 'echo %USERNAME%' 2>/dev/null | tr -d '\r\n ' || true)
 if [ -n "$WINDOWS_USER" ]; then
-  WIN_FILE="/mnt/c/Users/${WINDOWS_USER}/.wezterm.lua"
   REPO_FILE="$DOTFILES/wezterm/.config/wezterm/wezterm.lua"
-  cmd.exe /c "mklink /H \"C:\\Users\\${WINDOWS_USER}\\.wezterm.lua\" \"C:\\Users\\${WINDOWS_USER}\\dotfiles\\wezterm\\.config\\wezterm\\wezterm.lua\"" 2>/dev/null \
-    || cp "$REPO_FILE" "$WIN_FILE"
-  echo "  Created WezTerm config on Windows"
+  WIN_FILE="/mnt/c/Users/${WINDOWS_USER}/.wezterm.lua"
+  cp "$REPO_FILE" "$WIN_FILE"
+  echo "  Synced WezTerm config to Windows"
 fi
