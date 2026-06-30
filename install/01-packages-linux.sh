@@ -7,25 +7,36 @@ source "$DOTFILES/lib/utils.sh"
 # ── apt packages ──
 echo "  Installing apt packages..."
 sudo apt update
-sudo apt install -y \
-  git zsh tmux fzf ripgrep fd-find bat eza htop fastfetch stow \
-  build-essential curl unzip
+
+# Phase 1: Core prerequisites (brew prerequisites per official docs)
+sudo apt install -y git curl file procps build-essential
+
+# Phase 2: Shell
+sudo apt install -y zsh
 
 mkdir -p ~/.local/bin
-ln -sf /usr/bin/fdfind ~/.local/bin/fd
-ln -sf /usr/bin/batcat ~/.local/bin/bat 2>/dev/null || ln -sf /usr/bin/bat ~/.local/bin/bat
+ln -sf /usr/bin/fdfind ~/.local/bin/fd 2>/dev/null || true
+ln -sf /usr/bin/batcat ~/.local/bin/bat 2>/dev/null || ln -sf /usr/bin/bat ~/.local/bin/bat 2>/dev/null || true
 
-# ── Homebrew (for packages needing latest versions) ──
+# ── Homebrew (needs git + curl from Phase 1) ──
 if ! cmd_exists brew; then
   echo "  Installing Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+# Phase 3: Brew packages (needs brew)
 echo "  Installing brew packages..."
 brew install neovim lazygit lazydocker git-delta lf
 
-# ── Manual / curl installs ──
+# Phase 4: Core dev tools (optional failures OK)
+sudo apt install -y tmux fzf ripgrep fd-find bat stow 2>/dev/null || true
+
+# Phase 5: Extras (optional)
+sudo apt install -y eza htop 2>/dev/null || true
+sudo apt install -y fastfetch 2>/dev/null || echo "  (fastfetch not available, optional)"
+
+# ── Manual / curl installs (uses curl from Phase 1) ──
 if ! cmd_exists starship; then
   echo "  Installing starship..."
   curl -sS https://starship.rs/install.sh | sh -s -- -y
