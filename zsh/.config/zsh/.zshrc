@@ -80,7 +80,7 @@ if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
-autoload -U compinit && compinit
+autoload -U compinit && compinit -C
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
