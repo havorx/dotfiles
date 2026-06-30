@@ -37,7 +37,7 @@ config.keys = {
 	{
 		key = "Enter",
 		mods = "SHIFT",
-		action = wezterm.action.SendString("\x1b[13;2u"),
+		action = wezterm.action.SendString("\n"),
 	},
 	{
 		key = "P",
