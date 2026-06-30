@@ -4,45 +4,66 @@ set -euo pipefail
 export DBX_CONTAINER_MANAGER=podman
 IMAGE="${1:-ubuntu:24.04}"
 NAME="test-dotfiles-$(date +%s)"
+TEST_HOME="/tmp/test-dotfiles-home-$(date +%s)"
 
 echo "Creating Distrobox: $NAME ($IMAGE) via Podman..."
-distrobox create --name "$NAME" --image "$IMAGE" --yes
+distrobox create --name "$NAME" --image "$IMAGE" --home "$TEST_HOME" --yes
 
-echo "Initializing container (triggers distrobox setup)..."
+echo "Initializing container..."
 distrobox enter "$NAME" -- true
 
-echo "Copying dotfiles in..."
+echo "Copying dotfiles into container..."
 podman start "$NAME"
 podman exec "$NAME" mkdir -p /tmp/dotfiles
 podman cp "$HOME/dotfiles/." "$NAME:/tmp/dotfiles/"
 
+echo "Moving dotfiles to isolated home..."
+podman exec "$NAME" bash -c '
+  export HOME='"$TEST_HOME"'
+  mkdir -p "$HOME"
+  cp -r /tmp/dotfiles "$HOME/dotfiles"
+  chown -R "$(id -u):$(id -g)" "$HOME/dotfiles" 2>/dev/null || true
+'
+
 echo "Running install..."
 podman exec "$NAME" bash -c '
   set -euo pipefail
-  cp -r /tmp/dotfiles ~/dotfiles
-  cd ~/dotfiles
+  export HOME='"$TEST_HOME"'
+  cd "$HOME/dotfiles"
   ./install.sh 2>&1
 ' | while IFS= read -r line; do echo "  $line"; done
 
 echo ""
 echo "=== Verifying ==="
 podman exec "$NAME" bash -c '
+  export HOME='"$TEST_HOME"'
   echo "Checking tools..."
   which tmux neovim fzf starship zoxide mise || true
   echo ""
   echo "Checking oh-my-zsh..."
-  ls ~/.oh-my-zsh/ 2>/dev/null || echo "  oh-my-zsh not found"
+  ls "$HOME/.oh-my-zsh/" 2>/dev/null || echo "  oh-my-zsh not found"
   echo ""
   echo "Checking stow symlinks..."
-  ls -la ~/.config/zsh/.zshrc ~/.config/git/config 2>/dev/null || echo "  symlinks not found"
+  ls -la "$HOME/.config/zsh/.zshrc" "$HOME/.config/git/config" 2>/dev/null || echo "  symlinks not found"
   echo ""
   echo "=== Testing idempotency ==="
-  cd ~/dotfiles && ./install.sh
+  cd "$HOME/dotfiles" && ./install.sh
 ' | while IFS= read -r line; do echo "  $line"; done
+
+echo ""
+echo "=== Host safety check ==="
+LEAKED=$(find ~/.config -user 100000 2>/dev/null | head -5)
+if [ -z "$LEAKED" ]; then
+  echo "  ✓ No permissions leaked to host ~/.config/"
+else
+  echo "  ✗ PERMISSIONS LEAKED!"
+  echo "  $LEAKED"
+fi
 
 echo ""
 echo "Cleaning up..."
 distrobox stop "$NAME" --yes
 distrobox rm "$NAME" --yes
+rm -rf "$TEST_HOME"
 
 echo "✓ All tests passed!"
