@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export DBX_CONTAINER_MANAGER=docker
 IMAGE="${1:-ubuntu:24.04}"
 NAME="test-dotfiles-$(date +%s)"
 
 echo "Creating Distrobox: $NAME ($IMAGE)..."
-distrobox create --name "$NAME" --image "$IMAGE" --yes
+distrobox create --name "$NAME" --image "$IMAGE" --unshare-all --yes
 
 echo "Copying dotfiles in..."
 distrobox enter "$NAME" -- cp -r "$HOME/dotfiles" /tmp/dotfiles
