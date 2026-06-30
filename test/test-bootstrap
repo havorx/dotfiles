@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE="${1:-ubuntu:24.04}"
+NAME="test-dotfiles-$(date +%s)"
+
+echo "Creating Distrobox: $NAME ($IMAGE)..."
+distrobox create --name "$NAME" --image "$IMAGE" --yes
+
+echo "Copying dotfiles in..."
+distrobox enter "$NAME" -- cp -r "$HOME/dotfiles" /tmp/dotfiles
+
+echo "Running install..."
+distrobox enter "$NAME" -- bash -c '
+  set -euo pipefail
+  cp -r /tmp/dotfiles ~/dotfiles
+  cd ~/dotfiles
+  ./install.sh
+  echo ""
+  echo "=== Verifying ==="
+  which tmux neovim fzf starship zoxide mise
+  ls ~/.oh-my-zsh
+  ls ~/.config/zsh/.zshrc
+  ls ~/.config/git/config
+  echo ""
+  echo "=== Testing idempotency ==="
+  ./install.sh
+  echo "All checks passed!"
+'
+
+echo ""
+echo "Cleaning up..."
+distrobox stop "$NAME" --yes
+distrobox rm "$NAME" --yes
+
+echo ""
+echo "✓ All tests passed!"
