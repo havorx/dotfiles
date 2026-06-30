@@ -82,12 +82,6 @@ fi
 
 fpath=(${(u)fpath})
 
-autoload -Uz compinit
-if [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
-  compinit
-else
-  compinit -C
-fi
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
