@@ -5,3 +5,6 @@ node = "lts"
 python = "latest"
 rust = "latest"
 usage = "latest"
+
+[settings]
+not_found_auto_install = false
