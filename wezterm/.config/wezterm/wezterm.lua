@@ -35,6 +35,11 @@ config.keys = {
 	-- 	action = wezterm.action.ToggleFullScreen,
 	-- },
 	{
+		key = "Enter",
+		mods = "SHIFT",
+		action = wezterm.action.SendString("\x1b[13;2u"),
+	},
+	{
 		key = "P",
 		mods = "CTRL",
 		action = wezterm.action({
