@@ -1,5 +1,7 @@
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -8,7 +10,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,8 +72,15 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions vi-mode zsh-syntax-highlighting docker-compose docker brew yarn fzf-tab tmux)
+plugins=(git zsh-autosuggestions vi-mode docker-compose docker brew yarn fzf-tab tmux golang ruby rbenv rust zsh-syntax-highlighting)
 
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+
+if type brew &>/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
+autoload -U compinit && compinit
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -92,9 +101,8 @@ source $ZSH/oh-my-zsh.sh
 # export ARCHFLAGS="-arch x86_64"
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
+# Aliases can be placed here, though oh-my-zsh users are encouraged to define
+# aliases within the ZSH_CUSTOM folder. For a full list of active aliases, run `alias`.
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
@@ -102,19 +110,9 @@ source $ZSH/oh-my-zsh.sh
 
 
 alias v='nvim'
-alias vi='nvim'
-alias vim='nvim'
 
 export VISUAL=nvim
 export EDITOR=nvim
-
-if type brew &>/dev/null
-then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-
-  autoload -Uz compinit
-  compinit
-fi
 
 
 lfcd () {
@@ -130,9 +128,53 @@ eval "$(starship init zsh)"
 
 eval "$(zoxide init zsh)"
 
-eval "$(fzf --zsh)"
+source <(fzf --zsh)
 
 eval "$(~/.local/bin/mise activate zsh)"
 
 eval "$(~/.local/bin/mise completion zsh)"
 
+# opencode
+export PATH=/home/havorx/.opencode/bin:$PATH
+#compdef opencode
+###-begin-opencode-completions-###
+#
+# yargs command completion script
+#
+# Installation: opencode completion >> ~/.zshrc
+#    or opencode completion >> ~/.zprofile on OSX.
+#
+_opencode_yargs_completions()
+{
+  local reply
+  local si=$IFS
+  IFS=$'
+' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" opencode --get-yargs-completions "${words[@]}"))
+  IFS=$si
+  if [[ ${#reply} -gt 0 ]]; then
+    _describe 'values' reply
+  else
+    _default
+  fi
+}
+if [[ "'${zsh_eval_context[-1]}" == "loadautofunc" ]]; then
+  _opencode_yargs_completions "$@"
+else
+  compdef _opencode_yargs_completions opencode
+fi
+###-end-opencode-completions###
+
+
+# Disable oh-my-opencode telemetry
+export OMO_SEND_ANONYMOUS_TELEMETRY=0
+
+# Enable Exa websearch in opencode
+export OPENCODE_ENABLE_EXA=1
+
+git() {
+  if [[ "$(pwd -P)" == /mnt/c/* ]] && command -v git.exe &>/dev/null; then
+    git.exe "$@"
+  else
+    command git "$@"
+  fi
+}
