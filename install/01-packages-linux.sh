@@ -30,7 +30,7 @@ echo "  Installing brew packages..."
 brew install neovim lazygit lazydocker git-delta lf fzf
 
 # Phase 4: Core dev tools (optional failures OK)
-sudo apt install -y tmux ripgrep fd-find bat xsel 2>/dev/null || true
+sudo apt install -y tmux ripgrep fd-find bat xsel iw 2>/dev/null || true
 
 # Phase 5: Extras (optional)
 sudo apt install -y eza htop 2>/dev/null || true
