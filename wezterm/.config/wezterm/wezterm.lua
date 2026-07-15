@@ -29,11 +29,16 @@ config.enable_kitty_keyboard = true
 config.canonicalize_pasted_newlines = "LineFeed"
 
 config.keys = {
-	-- {
-	-- 	key = "n",
-	-- 	mods = "SHIFT|CTRL",
-	-- 	action = wezterm.action.ToggleFullScreen,
-	-- },
+	{
+		key = "N",
+		mods = "CTRL",
+		action = wezterm.action.ToggleFullScreen,
+	},
+	{
+		key = "Enter",
+		mods = "ALT",
+		action = wezterm.action.SendString("\n"),
+	},
 	{
 		key = "P",
 		mods = "CTRL",
